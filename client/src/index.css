@@ -1,0 +1,183 @@
+@import "tailwindcss";
+
+
+/* @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@300;500;700&display=swap'); */
+
+:root {
+  --bg-color: #050505;
+  --surface-color: #121212;
+  --surface-accent: #1a1a1a;
+  --primary: #ff00ff;
+  --secondary: #00ffff;
+  --accent: #ffff00;
+  --text-main: #ffffff;
+  --text-dim: #a0a0a0;
+  --neon-glow: 0 0 10px rgba(255, 0, 255, 0.5), 0 0 20px rgba(255, 0, 255, 0.2);
+  --neon-glow-cyan: 0 0 10px rgba(0, 255, 255, 0.5), 0 0 20px rgba(0, 255, 255, 0.2);
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  font-family: 'Outfit', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+h1, h2, h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  letter-spacing: -1px;
+}
+
+button {
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  font-family: inherit;
+  border-radius: 12px;
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+.neon-btn {
+  background: transparent;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  padding: 12px 24px;
+  font-weight: 600;
+  box-shadow: var(--neon-glow);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.neon-btn:hover {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
+}
+
+.neon-btn-cyan {
+  background: transparent;
+  color: var(--secondary);
+  border: 1px solid var(--secondary);
+  padding: 12px 24px;
+  font-weight: 600;
+  box-shadow: var(--neon-glow-cyan);
+}
+
+.neon-btn-cyan:hover {
+  background: var(--secondary);
+  color: black;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+}
+
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 24px;
+}
+
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.logo {
+  font-size: 2.5rem;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 2rem;
+  background: linear-gradient(to right, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 5px rgba(255, 0, 255, 0.3));
+}
+
+.input-group {
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+}
+
+input[type="text"] {
+  width: 100%;
+  background: var(--surface-color);
+  border: 1px solid var(--glass-border);
+  padding: 14px;
+  border-radius: 12px;
+  color: white;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+input[type="text"]:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.request-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: var(--surface-color);
+  border-radius: 16px;
+  margin-bottom: 12px;
+  transition: transform 0.2s;
+}
+
+.request-card:hover {
+  transform: translateX(5px);
+  background: var(--surface-accent);
+}
+
+.thumb {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.request-info {
+  flex: 1;
+}
+
+.request-title {
+  font-weight: 500;
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+
+.copy-btn {
+  background: transparent;
+  color: var(--secondary);
+  border: 1px solid var(--secondary);
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  border-radius: 8px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-in {
+  animation: fadeIn 0.4s ease forwards;
+}
