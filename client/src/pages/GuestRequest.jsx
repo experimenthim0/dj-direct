@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Send, CheckCircle2 } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 function GuestRequest({ shortId, navigate }) {
   const [room, setRoom] = useState(null);
@@ -19,7 +20,7 @@ function GuestRequest({ shortId, navigate }) {
     setDeviceId(dId);
 
     // Fetch room details
-    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/rooms/${shortId}`)
+    fetch(`${API_BASE_URL}/api/rooms/${shortId}`)
       .then(res => res.json())
       .then(data => {
         if (data.error) {
@@ -37,7 +38,7 @@ function GuestRequest({ shortId, navigate }) {
 
     setLoading(true);
     try {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/search?q=${encodeURIComponent(query)}`);
+      const res = await fetch(`${API_BASE_URL}/api/search?q=${encodeURIComponent(query)}`);
       const data = await res.json();
       setResults(data);
     } catch (error) {
@@ -60,7 +61,7 @@ function GuestRequest({ shortId, navigate }) {
     }
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/requests`, {
+      const res = await fetch(`${API_BASE_URL}/api/requests`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

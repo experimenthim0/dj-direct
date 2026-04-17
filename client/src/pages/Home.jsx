@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../config';
 
 function Home({ navigate }) {
   const [name, setName] = useState('');
@@ -26,7 +27,7 @@ function Home({ navigate }) {
 
     setLoading(true);
     try {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/rooms`, {
+      const res = await fetch(`${API_BASE_URL}/api/rooms`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name })

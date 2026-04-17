@@ -29,7 +29,7 @@ const io = new Server(server, {
 
 
 app.use(cors({
-  origin: 'https://dj-direct.vercel.app', // ✅ no trailing slash
+  origin: process.env.FRONTEND_URL || "http://localhost:5173", // ✅ uses env or dev default
   methods: ['GET', 'POST'],
   credentials: true
 }));

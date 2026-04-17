@@ -3,7 +3,7 @@ import { io } from 'socket.io-client';
 import QRCode from 'qrcode';
 import { Copy, Trash2, QrCode as QrIcon, Clock, PlusCircle } from 'lucide-react';
 
-const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
+import { API_BASE_URL } from '../config';
 
 function DJDashboard({ shortId, navigate }) {
   const [data, setData] = useState(null);
