@@ -9,6 +9,8 @@ const crypto = require('crypto');
 
 dotenv.config();
 
+const FRONTEND_URL = (process.env.FRONTEND_URL || "http://localhost:5173").replace(/\/$/, "");
+
 const Room = require('./models/Room');
 const Request = require('./models/Request');
 
@@ -16,8 +18,8 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: process.env.FRONTEND_URL || "http://localhost:5173",
-    methods: ["GET", "POST"]
+    origin: FRONTEND_URL,
+    methods: ["GET", "POST","DELETE","PATCH"]
   }
 });
 
@@ -29,8 +31,8 @@ const io = new Server(server, {
 
 
 app.use(cors({
-  origin: process.env.FRONTEND_URL || "http://localhost:5173", // ✅ uses env or dev default
-  methods: ['GET', 'POST'],
+  origin: FRONTEND_URL, // ✅ normalized (no trailing slash)
+  methods: ['GET', 'POST','DELETE','PATCH'],
   credentials: true
 }));
 app.use(express.json());
@@ -91,6 +93,24 @@ app.patch('/api/rooms/:shortId/extend', async (req, res) => {
   }
 });
 
+// Toggle Room Requests (Pause/Resume Queue)
+app.patch('/api/rooms/:shortId/toggle-requests', async (req, res) => {
+  try {
+    const room = await Room.findOne({ shortId: req.params.shortId });
+    if (!room) return res.status(404).json({ error: 'Room not found' });
+
+    room.requestsEnabled = !room.requestsEnabled;
+    await room.save();
+
+    // Broadcast to guests and DJ
+    io.to(room._id.toString()).emit('queue-status-updated', { requestsEnabled: room.requestsEnabled });
+
+    res.json({ message: `Queue ${room.requestsEnabled ? 'resumed' : 'paused'}`, requestsEnabled: room.requestsEnabled });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // YouTube Search API Proxy
 app.get('/api/search', async (req, res) => {
   try {
@@ -117,6 +137,10 @@ app.post('/api/requests', async (req, res) => {
     // Check if room exists
     const room = await Room.findById(roomId);
     if (!room) return res.status(404).json({ error: 'Room not found' });
+
+    if (!room.requestsEnabled) {
+      return res.status(403).json({ error: 'The queue is currently paused by the DJ.' });
+    }
 
     // Simple anti-spam: limit 3 active requests per device per room
     const recentCount = await Request.countDocuments({ roomId, deviceId });

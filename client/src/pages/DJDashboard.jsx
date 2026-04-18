@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
 import QRCode from 'qrcode';
-import { Copy, Trash2, QrCode as QrIcon, Clock, PlusCircle } from 'lucide-react';
+import { Copy, Trash2, QrCode as QrIcon, Clock, PlusCircle, Pause, Play } from 'lucide-react';
 
 import { API_BASE_URL } from '../config';
 
@@ -42,6 +42,10 @@ function DJDashboard({ shortId, navigate }) {
 
           socketRef.current.on('request-deleted', (id) => {
             setRequests(prev => prev.filter(r => r._id !== id));
+          });
+          
+          socketRef.current.on('queue-status-updated', ({ requestsEnabled }) => {
+            setData(prev => ({ ...prev, requestsEnabled }));
           });
         }
       });
@@ -108,6 +112,18 @@ function DJDashboard({ shortId, navigate }) {
     }
   };
 
+  const toggleQueue = async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/rooms/${shortId}/toggle-requests`, { method: 'PATCH' });
+      const resData = await res.json();
+      if (resData.hasOwnProperty('requestsEnabled')) {
+        setData(prev => ({ ...prev, requestsEnabled: resData.requestsEnabled }));
+      }
+    } catch (error) {
+      console.error('Toggle error:', error);
+    }
+  };
+
   const getTimeAgo = (date) => {
     const seconds = Math.floor((now - new Date(date)) / 1000);
     if (seconds < 60) return 'just now';
@@ -119,11 +135,15 @@ function DJDashboard({ shortId, navigate }) {
   if (!data) return <div className="p-8 text-center text-gray-500 animate-pulse">Loading Dashboard...</div>;
 
   return (
+    <>
     <div className="max-w-4xl mx-auto p-4 md:p-8 animate-in fade-in duration-500">
       {/* Header Section */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-2">
         <div>
-          <h1 className="text-3xl font-black tracking-tighter text-white uppercase italic">{data.name}</h1>
+          <p className="logo">DJ-DIRECT</p>
+        </div>
+        <div>
+          <h1 className="text-3xl font-bold tracking-wide text-white capitalize">{data.name}</h1>
           <div className="flex items-center gap-4 mt-1">
             <p className="text-gray-400 text-xs font-mono">BOOTH: {shortId}</p>
             <div className={`flex items-center gap-1.5 text-xs font-bold ${timeLeft === 'EXPIRED' ? 'text-red-500' : 'text-cyan-400'}`}>
@@ -135,14 +155,24 @@ function DJDashboard({ shortId, navigate }) {
 
         <div className="flex gap-2">
           <button 
+            onClick={toggleQueue}
+            className={`flex items-center gap-2 px-4 py-2 text-xs font-bold border-2 rounded-full transition-all active:scale-95 ${
+              data.requestsEnabled 
+                ? 'border-yellow-500/80 text-yellow-400 hover:bg-yellow-500/10' 
+                : 'border-green-500/80 text-green-400 hover:bg-green-500/10'
+            }`}
+          >
+            {data.requestsEnabled ? <><Pause size={16} /> PAUSE QUEUE</> : <><Play size={16} /> RESUME QUEUE</>}
+          </button>
+          <button 
             onClick={extendSession}
-            className="flex items-center gap-2 px-4 py-2 text-xs font-bold border-2 border-cyan-500/50 text-cyan-400 rounded-full hover:bg-cyan-500/10 transition-all active:scale-95"
+            className="flex items-center gap-2 px-4 py-2 text-xs font-bold border-2 border-pink-500/80 text-pink-400 rounded-full hover:bg-pink-500/10 transition-all active:scale-95"
           >
             <PlusCircle size={16} /> +30M
           </button>
           <button 
             onClick={() => setShowQR(!showQR)}
-            className="flex items-center gap-2 px-4 py-2 text-xs font-bold bg-cyan-500 text-black rounded-full hover:bg-cyan-400 transition-all active:scale-95"
+            className="flex items-center gap-2 px-4 py-2 text-xs font-bold bg-pink-500 text-white rounded-full hover:bg-pink-400 transition-all active:scale-95"
           >
             <QrIcon size={16} /> {showQR ? 'HIDE' : 'QR CODE'}
           </button>
@@ -181,16 +211,16 @@ function DJDashboard({ shortId, navigate }) {
                 key={req._id} 
                 className="group flex items-center gap-4 p-3 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl transition-all animate-in slide-in-from-top-2"
               >
-                {req.thumbnail && (
+                {/* {req.thumbnail && (
                   <img src={req.thumbnail} alt="" className="w-14 h-14 rounded-lg object-cover shadow-lg" />
                 )}
-                
+                 */}
                 <div className="flex-1 min-w-0">
-                  <div className="text-gray-100 font-bold truncate leading-tight mb-1">
+                  <div className="text-gray-100 font-medium truncate leading-tight mb-1 text-sm">
                     {req.title}
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-[10px] uppercase font-bold text-gray-500 tracking-wider">
+                    <span className="text-[10px] font-bold text-gray-500 tracking-wider">
                       {getTimeAgo(req.createdAt)}
                     </span>
                     <button 
@@ -213,13 +243,13 @@ function DJDashboard({ shortId, navigate }) {
           </div>
         )}
       </div>
-
-      <footer className="mt-12 text-center">
-        <p className="text-[10px] font-black tracking-[0.3em] text-gray-600 uppercase">
-          DJ-DIRECT // Ultra-Low Latency Request Bridge
+</div>
+      <footer className=" text-center fixed bottom-1 left-0 right-0 bg-white/5 backdrop-blur-xl border border-white/10  p-1">
+        <p className="text-[10px] font-black  text-gray-600">
+          DJ-DIRECT Made with ❤️ by <a href="https://nikhim.me">Nikhil Yadav</a>
         </p>
       </footer>
-    </div>
+    </>
   );
 }
 

@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Search, Send, CheckCircle2 } from 'lucide-react';
+import { Search, Send, CheckCircle2, PauseCircle } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { io } from 'socket.io-client';
 import { API_BASE_URL } from '../config';
 
 function GuestRequest({ shortId, navigate }) {
@@ -28,6 +29,15 @@ function GuestRequest({ shortId, navigate }) {
           navigate('/');
         } else {
           setRoom(data.room);
+          
+          const socket = io(API_BASE_URL);
+          socket.emit('join-room', data.room._id);
+          
+          socket.on('queue-status-updated', ({ requestsEnabled }) => {
+            setRoom(prev => ({ ...prev, requestsEnabled }));
+          });
+
+          return () => socket.disconnect();
         }
       });
   }, [shortId]);
@@ -100,10 +110,11 @@ function GuestRequest({ shortId, navigate }) {
       <form onSubmit={searchSongs} className="input-group" style={{ position: 'relative' }}>
         <input 
           type="text" 
-          placeholder="Search song or artist..." 
+          placeholder={room.requestsEnabled ? "Search song or artist..." : "Queue is paused..."}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           style={{ paddingRight: '50px' }}
+          disabled={!room.requestsEnabled}
         />
         <button 
           type="submit" 
@@ -116,11 +127,21 @@ function GuestRequest({ shortId, navigate }) {
             padding: '8px',
             borderRadius: '8px'
           }}
-          disabled={loading}
+          disabled={loading || !room.requestsEnabled}
         >
           <Search size={18} />
         </button>
       </form>
+
+      {!room.requestsEnabled && (
+        <div className="animate-in fade-in zoom-in-95 duration-500 bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4 mb-6 flex items-center gap-3 text-yellow-500">
+          <PauseCircle size={24} />
+          <div>
+            <p className="font-bold text-sm">Queue is Paused</p>
+            <p className="text-xs opacity-80">The DJ has temporarily stopped new requests. Check back in a few!</p>
+          </div>
+        </div>
+      )}
 
       <div className="results-list">
         {loading && <p style={{ textAlign: 'center', color: 'var(--text-dim)' }}>Searching YouTube...</p>}
@@ -135,7 +156,7 @@ function GuestRequest({ shortId, navigate }) {
               className={sent === song.id ? "neon-btn-cyan" : "neon-btn"}
               style={{ padding: '8px 12px', fontSize: '0.8rem' }}
               onClick={() => sendRequest(song)}
-              disabled={sent === song.id}
+              disabled={sent === song.id || !room.requestsEnabled}
             >
               {sent === song.id ? <CheckCircle2 size={16} /> : <Send size={16} />}
             </button>

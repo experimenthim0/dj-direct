@@ -19,6 +19,10 @@ const roomSchema = new mongoose.Schema({
     type: Date,
     required: true,
     index: { expires: 0 }
+  },
+  requestsEnabled: {
+    type: Boolean,
+    default: true
   }
 });
 
