@@ -11,7 +11,7 @@ Instant Setup: The DJ creates a room in one click. No login required for guests.
 
 QR Entry: A generated QR code is pasted on the speakers for guests to join the "Digital Queue."
 
-Auto-Self Destruct: To keep the database clean and private, the entire room and all its requests automatically delete after 3 hours using MongoDB TTL indexes.
+Auto-Self Destruct: To keep the database clean and private, the entire room and all its requests automatically delete after 7 hours using MongoDB TTL indexes.
 
 2. "Title-Only" YouTube Search
 Global Search: Guests search any song via the YouTube API to ensure correct spellings and versions.

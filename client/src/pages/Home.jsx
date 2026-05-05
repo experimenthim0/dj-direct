@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { History, PlayCircle, Hash, Plus, Music } from 'lucide-react';
 import { API_BASE_URL } from '../config';
 
 function Home({ navigate }) {
@@ -7,12 +8,12 @@ function Home({ navigate }) {
   const [recentRooms, setRecentRooms] = useState([]);
 
   useEffect(() => {
-    // Load and filter recent rooms (3 hour limit)
+    // Load and filter recent rooms (7 hour limit)
     const stored = JSON.parse(localStorage.getItem('dj_direct_recent_rooms') || '[]');
     const now = Date.now();
-    const threeHours = 3 * 60 * 60 * 1000;
+    const sevenHours = 7 * 60 * 60 * 1000;
     
-    const validRooms = stored.filter(room => (now - room.timestamp) < threeHours);
+    const validRooms = stored.filter(room => (now - room.timestamp) < sevenHours);
     setRecentRooms(validRooms);
     
     // Cleanup storage if needed
@@ -56,7 +57,7 @@ function Home({ navigate }) {
       <div className="glass-card" style={{ textAlign: 'center' }}>
         <h1 className="logo">DJ-DIRECT</h1>
         <p style={{ color: 'var(--text-dim)', marginBottom: '30px' }}>
-          Create a temporary 3-hour digital bridge for your crowd.
+          <Music size={14} className="inline mr-1" /> Create a temporary 7-hour digital bridge for your crowd.
         </p>
 
         <form onSubmit={createRoom} style={{ marginBottom: '40px' }}>
@@ -70,15 +71,15 @@ function Home({ navigate }) {
               required
             />
           </div>
-          <button type="submit" className="neon-btn" style={{ width: '100%' }} disabled={loading}>
-            {loading ? 'Setting up booth...' : 'Open DJ Booth'}
+          <button type="submit" className="neon-btn" style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }} disabled={loading}>
+            {loading ? 'Setting up booth...' : <><Plus size={20} /> Open DJ Booth</>}
           </button>
         </form>
 
         {recentRooms.length > 0 && (
           <div style={{ textAlign: 'left', marginTop: '20px' }}>
-            <label style={{ display: 'block', color: 'var(--text-dim)', fontSize: '0.8rem', textTransform: 'uppercase', marginBottom: '10px' }}>
-              Recently Opened Booths
+            <label style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-dim)', fontSize: '0.7rem', textTransform: 'uppercase', marginBottom: '10px', letterSpacing: '1px' }}>
+              <History size={14} /> Recently Opened Booths
             </label>
             {recentRooms.map(room => (
               <div 
@@ -89,16 +90,20 @@ function Home({ navigate }) {
               >
                 <div className="request-info">
                   <div className="request-title">{room.name}</div>
-                  <div style={{ fontSize: '0.7rem', color: 'var(--secondary)' }}>ID: {room.shortId}</div>
+                  <div style={{ fontSize: '0.7rem', color: 'var(--secondary)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Hash size={10} /> {room.shortId}
+                  </div>
                 </div>
-                <div style={{ color: 'var(--secondary)', fontSize: '0.8rem' }}>RESUME</div>
+                <div style={{ color: 'var(--secondary)', fontSize: '0.7rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <PlayCircle size={14} /> RESUME
+                </div>
               </div>
             ))}
           </div>
         )}
 
         <p style={{ marginTop: '40px', fontSize: '0.8rem', color: '#444' }}>
-          No login required. Booth auto-deletes after 3 hours.
+          No login required. Booth auto-deletes after 7 hours.
         </p>
 
         <hr style={{ margin: '40px 0', border: 'none', height: '1px', background: 'var(--glass-border)' }} />

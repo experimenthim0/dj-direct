@@ -22,7 +22,7 @@ const requestSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now,
-    expires: 3 * 60 * 60 // 3 hours in seconds (matches room)
+    expires: 7 * 60 * 60 // 7 hours in seconds (matches room)
   }
 });
 

@@ -4,14 +4,14 @@
 /* @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@300;500;700&display=swap'); */
 
 :root {
-  --bg-color: #050505;
-  --surface-color: #121212;
-  --surface-accent: #1a1a1a;
+  --bg-color: #121212;
+  --surface-color: #1a1a1a;
+  --surface-accent: #222222;
   --primary: #ff00ff;
   --secondary: #00ffff;
   --accent: #ffff00;
   --text-main: #ffffff;
-  --text-dim: #a0a0a0;
+  --text-dim: #808080;
   --neon-glow: 0 0 10px rgba(255, 0, 255, 0.5), 0 0 20px rgba(255, 0, 255, 0.2);
   --neon-glow-cyan: 0 0 10px rgba(0, 255, 255, 0.5), 0 0 20px rgba(0, 255, 255, 0.2);
   --glass-bg: rgba(255, 255, 255, 0.03);
@@ -40,8 +40,12 @@ button {
   border-radius: 12px;
 }
 
+button:hover {
+  transform: scale(1.02);
+}
+
 button:active {
-  transform: scale(0.95);
+  transform: scale(0.98);
 }
 
 .neon-btn {
@@ -116,18 +120,20 @@ button:active {
 
 input[type="text"] {
   width: 100%;
-  background: var(--surface-color);
-  border: 1px solid var(--glass-border);
-  padding: 14px;
-  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: none;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  padding: 14px 0;
+  border-radius: 0;
   color: white;
-  font-size: 1rem;
-  transition: border-color 0.2s;
+  font-size: 1.1rem;
+  transition: all 0.2s ease;
 }
 
 input[type="text"]:focus {
   outline: none;
-  border-color: var(--primary);
+  border-bottom-color: var(--primary);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .request-card {

@@ -49,9 +49,9 @@ app.post('/api/rooms', async (req, res) => {
     const { name } = req.body;
     const shortId = crypto.randomBytes(3).toString('hex'); // Simple short ID
     
-    // Set initial expiry to 3 hours from now
+    // Set initial expiry to 7 hours from now
     const expiresAt = new Date();
-    expiresAt.setHours(expiresAt.getHours() + 3);
+    expiresAt.setHours(expiresAt.getHours() + 7);
 
     const room = new Room({ shortId, name, expiresAt });
     await room.save();
